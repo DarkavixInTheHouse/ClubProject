@@ -1,0 +1,138 @@
+<%- include("particals/head") %>
+
+<div class="card mt-3 shadow">
+    <div class="card-header">
+        <i class="far fa-address-card"></i> ระบบสมัครชุมนุมออนไลน์ ( พบทั้งหมด <span id="clubCount">loading</span>
+        ชุมนุม )
+    </div>
+    <div class="card-body text-center">
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th class="col-1">#</th>
+                    <th class="col-3">ชื่อชุมนุม</th>
+                    <th class="col-2">ครูผู้สอน</th>
+                    <th class="col-2">จำนวนที่รับ</th>
+                    <th class="col-2">จำนวนผู้สมัคร</th>
+                    <th class="col-2">ตัวเลือก</th>
+                </tr>
+            </thead>
+            <tbody id="ClubRows">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modalRows"></div>
+
+<script>
+    function updateRows() {
+        $.ajax({
+            url: "/api/v1/clubs/all",
+            dataType: "json",
+            success: json => {
+                $("#clubCount").html(json.data.length)
+                $("#ClubRows").html("")
+                $("#modalRows").html("")
+                for (let obj of json.data) {
+                    $("#ClubRows").append(`
+                    <tr>
+                        <td class="align-middle">${obj.id}</td>
+                        <td class="align-middle">${obj.name}</td>
+                        <td class="align-middle">${obj.firstname_teacher} ${obj.lastname_teacher}</td>
+                        <td class="align-middle">${obj.max}</td>
+                        <td class="align-middle">${obj.min}</td>
+                        <td class="align-middle"><button class="btn btn-dark" data-toggle="modal" data-target="#Dialog${obj.id}"><i class="fas fa-search"></i> ดูเพิ่มเติม</button></td>
+                    </tr>
+                    `)
+                    $("#modalRows").append(`
+                    <div class="modal fade" id="Dialog${obj.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">ชุมนุม: ${obj.name}</h5>
+                                    <button class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>ครูผู้สอน : ${obj.firstname_teacher} ${obj.lastname_teacher}</h6>
+                                    <h6>จำนวนที่รับได้/จำนวนผู้สมัคร : ${obj.max}/${obj.min}</h6>
+                                    <h6>สถานะการรับสมัคร : ${obj.min >= obj.max ? "ปิดรับสมัคร" : "เปิดรับสมัคร"}</h6>
+                                    <button class="btn btn-dark w-100" data-dismiss="modal" onclick="checkId(${obj.id})"><i class="fas fa-sign-in-alt"></i> สมัคร</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `)
+                }
+            }
+        })
+    }
+
+    function checkId(id) {
+        Swal.fire({
+            title: 'กรอกเลขประจำตัวนักเรียน',
+            input: 'text',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'เช็ค',
+            showLoaderOnConfirm: true,
+            preConfirm: (id) => {
+                return fetch(`/api/v1/users/${id}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.json()
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        )
+                    })
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let data = result.value.data
+                if (data.length <= 0) return Swal.fire({
+                    title: `Request failed: ${result.value.msg}`,
+                })
+                confirmReg(data.id, id, data.firstname)
+            }
+        })
+    }
+    function confirmReg(id, cid, name) {
+        console.log(id)
+        Swal.fire({
+            title: `คุณต้องการเข้าชุมนุม?`,
+            text: `สวัสดี ${name}`,
+            showCancelButton: true,
+            confirmButtonText: `ใช่`,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/v1/clubs/joinclub",
+                    data: {
+                        id: id,
+                        cid: cid
+                    },
+                    dataType: "json",
+                    success: json => {
+                        Swal.fire(json.msg, '', json.error ? "error" : "success").then(() => {
+                            if(!json.error) return location.reload();
+                        })
+                    }
+                })
+            }
+        })
+    }
+    updateRows()
+
+</script>
+
+<%- include("particals/foot") %>
