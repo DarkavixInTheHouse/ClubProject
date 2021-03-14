@@ -3,19 +3,11 @@ const bodyParser = require("body-parser")
 const path = require("path")
 const db = require("better-sqlite3")("main.db")
 const app = express()
-const session = require('express-session')
 
 app.set("views", __dirname + "/views")
 app.set("view engine", "ejs")
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(express.static(path.join(__dirname, "public")))
-
-app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true
-}))
 
 app.get("/", (req, res) => {
     res.render("main")
