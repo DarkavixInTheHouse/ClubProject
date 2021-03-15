@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Preview
 
 ![Preview](https://cdn.discordapp.com/attachments/680320002666397705/820989705754902528/Screenshot_2021-03-15_Club3.png?width=1023&height=558)
@@ -9,6 +10,16 @@
 
 ## System ( Update 1.0.1 )
 #### หน้าบ้าน
+=======
+# Preview
+
+![Preview1](https://media.discordapp.net/attachments/680320002666397705/820662231553015828/Screenshot_2021-03-14_Club.png?width=1023&height=558)
+![Preview2](https://media.discordapp.net/attachments/680320002666397705/820662254306328586/Screenshot_2021-03-14_Club1.png?width=1023&height=558)
+![Preview3](https://cdn.discordapp.com/attachments/680320002666397705/820971616078921768/Screenshot_2021-03-15_Club.png?width=1023&height=558)
+![Preview4](https://cdn.discordapp.com/attachments/680320002666397705/820971806575558666/Screenshot_2021-03-15_Club1.png?width=1023&height=558)
+
+# System
+>>>>>>> f1b9549920ccf79deee306fd5de586ade5100d37
  - ดูข้อมูลชุมนุม (เสร็จ)
  - ดูข้อมูลนักเรียน (เสร็จ)
  - ระบบสมัครชุมนุม (เสร็จ)
@@ -17,6 +28,10 @@
 
 #### หลังบ้าน
 
+ - เพิ่ม/ลบ นักเรียน/ชุมนุม (ยังไม่เสร็จ)
+ - จัดการ นักเรียน/ชุมนุม (ยังไม่เสร็จ)
+
+ฺBackend
  - เพิ่ม/ลบ นักเรียน/ชุมนุม (ยังไม่เสร็จ)
  - จัดการ นักเรียน/ชุมนุม (ยังไม่เสร็จ)
 
