@@ -15,6 +15,68 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script>
+        function checkId(id) {
+            Swal.fire({
+                title: 'กรอกเลขประจำตัวนักเรียน',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'เช็ค',
+                showLoaderOnConfirm: true,
+                preConfirm: (id) => {
+                    return fetch(`/api/v1/users/${id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText)
+                            }
+                            return response.json()
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error}`
+                            )
+                        })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let data = result.value.data
+                    if (data.length <= 0) return Swal.fire(result.value.msg, '', result.value.error ? "error" : "success")
+                    confirmReg(data.id, id, data.firstname)
+                }
+            })
+        }
+        function confirmReg(id, cid, name) {
+            console.log(id)
+            Swal.fire({
+                title: `คุณต้องการเข้าชุมนุม?`,
+                text: `สวัสดี ${name}`,
+                showCancelButton: true,
+                confirmButtonText: `ใช่`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/v1/clubs/joinclub",
+                        data: {
+                            id: id,
+                            cid: cid
+                        },
+                        dataType: "json",
+                        success: json => {
+                            Swal.fire(json.msg, '', json.error ? "error" : "success").then(() => {
+                                if (!json.error) return location.reload();
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    </script>
 </head>
 
 <body>
@@ -34,15 +96,17 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    <input class="form-control mr-sm-2" id="search_box" placeholder="ค้นหาชุมนุมที่คุณสนใจ">
-                    <button class="btn btn-outline-light my-2 my-sm-0" id="search_btn" ><i class="fas fa-search"></i></button>
+                    <input class="form-control mr-sm-2" id="search_box" placeholder="ค้นหาชุมนุมที่คุณสนใจ"
+                        value="<%= search %>">
+                    <button class="btn btn-outline-light my-2 my-sm-0" id="search_btn"><i
+                            class="fas fa-search"></i></button>
                 </ul>
             </div>
         </div>
     </nav>
     <script>
         $("#search_btn").click(() => {
-            location.href = "/?s="+$("#search_box").val()
+            location.href = "/?s=" + $("#search_box").val()
         })
     </script>
     <div class="container">

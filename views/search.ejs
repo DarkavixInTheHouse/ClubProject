@@ -1,11 +1,11 @@
 <%- include("particals/head") %>
-
 <div class="card mt-3 shadow">
     <div class="card-header">
         <i class="far fa-address-card"></i> ระบบสมัครชุมนุมออนไลน์ ( พบทั้งหมด <span id="clubCount">loading</span>
         ชุมนุม )
     </div>
     <div class="card-body text-center">
+        <p class="text-left">คุณกำลังค้นหา: <span id="search"><%= search %></span></p>
         <table class="table table-sm table-hover">
             <thead>
                 <tr>
@@ -28,7 +28,7 @@
 <script>
     function updateRows() {
         $.ajax({
-            url: "/api/v1/clubs/all",
+            url: "/api/v1/clubs/search/"+$("#search").html(),
             dataType: "json",
             success: json => {
                 $("#clubCount").html(json.data.length)
@@ -96,7 +96,7 @@
         })
     }
 
-    
+
     updateRows()
 
 </script>
