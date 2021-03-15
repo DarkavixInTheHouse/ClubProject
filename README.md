@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ## Preview
 
 ![Preview](https://cdn.discordapp.com/attachments/680320002666397705/820989705754902528/Screenshot_2021-03-15_Club3.png?width=1023&height=558)
